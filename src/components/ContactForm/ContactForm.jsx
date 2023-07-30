@@ -1,50 +1,43 @@
 import PropTypes from 'prop-types'
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import { nanoid } from 'nanoid';
 
 import css from './ContactForm.module.css'
 
-export default class ContactForm extends Component {
-    state = {
-        name: '',
-        number: '',
-    }
+export default function ContactForm({addContact}) {
+    const [name, setName] = useState('')
+    const [number, setNumber] = useState('')
 
-    static propTypes = {
-         addContact: PropTypes.func.isRequired
-     };
-
-    handleChange = e => {
-        const { name, value } = e.target;
-        this.setState({ [name]: value, [name]: value });
-    }
+    const handleChange = e => {
+    const { name, value } = e.target;
+    switch (name) {
+        case 'name':
+            setName(value)
+            break;
+        case 'number':
+            setNumber(value)
+            break;
     
-    handleSubmit = (e) => {
+        default:
+            break;
+    }
+    }
+
+    const handleSubmit = (e) => {
         e.preventDefault();
-        const { name, number } = this.state;
         const data = {
             name,
             number,
         }
-        this.props.addContact(data)
-        this.reset();
+        addContact(data)
+        setName('')
+        setNumber('')
     }
 
-    reset = () => {
-    this.setState({
-      name: '',
-      number: '',
-    })
-    }
-
-    render() {
-        const { handleSubmit, handleChange } = this;
-        const { name, number } = this.state;
-        const idNameInput = nanoid();
-        const idNumberInput = nanoid()
-
-        return (
-            <div className={css.formWrap}>
+    const idNameInput = nanoid();
+    const idNumberInput = nanoid()
+    return (
+        <div className={css.formWrap}>
                 <form onSubmit={handleSubmit} className={css.form}>
                     <label htmlFor={idNameInput} className={css.label}>Name</label>
                     <input
@@ -73,13 +66,10 @@ export default class ContactForm extends Component {
                     <button type="submit" className={css.btn}>Add contact</button>
                 </form>
         </div>
-        )
+    )
     }
-}
 
-// ContactForm.propTypes = {
-//     onChange: PropTypes.func.isRequired,
-//     onSubmit: PropTypes.func.isRequired,
-//     name: PropTypes.string.isRequired,
-//     number: PropTypes.string.isRequired,
-// }
+
+ContactForm.propTypes = {
+    addContact: PropTypes.func.isRequired,
+}
